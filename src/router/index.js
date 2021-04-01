@@ -76,6 +76,28 @@ export const constantRoutes = [
       }
     ]
   },
+
+  {
+    path: '/instance',
+    component: Layout,
+    redirect: '/instance/todo',
+    name: 'Instance',
+    meta: { title: '工单', icon: 'el-icon-s-help' },
+    children: [
+      // {
+      //   path: 'table',
+      //   name: 'Table',
+      //   component: () => import('@/views/table/index'),
+      //   meta: { title: 'Table', icon: 'table' }
+      // },
+      {
+        path: 'todo',
+        name: 'Todo',
+        component: () => import('@/views/instance/index'),
+        meta: { title: '待办工单列表', icon: 'tree' }
+      }
+    ]
+  },
   //
   // {
   //   path: '/form',

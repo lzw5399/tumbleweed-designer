@@ -27,7 +27,6 @@
       <el-row :gutter="10" class="mb8">
         <el-col :span="1.5">
           <el-button
-            v-permisaction="['process:admin:manager:add']"
             type="primary"
             icon="el-icon-plus"
             size="mini"
@@ -37,7 +36,6 @@
         </el-col>
         <!-- <el-col :span="1.5">
           <el-button
-            v-permisaction="['system:sysrole:edit']"
             type="success"
             icon="el-icon-edit"
             size="mini"
@@ -47,7 +45,6 @@
         </el-col>
         <el-col :span="1.5">
           <el-button
-            v-permisaction="['system:sysrole:remove']"
             type="danger"
             icon="el-icon-delete"
             size="mini"
@@ -56,7 +53,7 @@
           >删除</el-button>
         </el-col> -->
       </el-row>
-
+      <br>
       <el-table
         v-loading="loading"
         border
@@ -95,7 +92,6 @@
         >
           <template slot-scope="scope">
             <el-button
-              v-permisaction="['process:admin:manager:clone']"
               size="mini"
               type="text"
               icon="el-icon-receiving"
@@ -103,21 +99,19 @@
             >克隆
             </el-button>
             <el-button
-              v-permisaction="['process:admin:manager:edit']"
               size="mini"
               type="text"
               icon="el-icon-edit"
               @click="handleEdit(scope.row)"
             >编辑
             </el-button>
-            <el-button
-              v-permisaction="['process:admin:manager:delete']"
-              size="mini"
-              type="text"
-              icon="el-icon-delete"
-              @click="handleDelete(scope.row)"
-            >删除
-            </el-button>
+<!--            <el-button-->
+<!--              size="mini"-->
+<!--              type="text"-->
+<!--              icon="el-icon-delete"-->
+<!--              @click="handleDelete(scope.row)"-->
+<!--            >删除-->
+<!--            </el-button>-->
           </template>
         </el-table-column>
       </el-table>
@@ -368,9 +362,6 @@ export default {
         ]
       }
     }
-  },
-  beforeMount() {
-    console.log(34324324324231)
   },
   created() {
     this.queryParams.pageIndex = 1
