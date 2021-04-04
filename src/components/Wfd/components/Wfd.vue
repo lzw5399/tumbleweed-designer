@@ -1,9 +1,10 @@
 <template>
   <div class="root">
-    <ToolbarPanel v-if="!isView" ref="toolbar" />
+    <ToolbarPanel v-if="!isView" ref="toolbar"/>
     <div style="display: flex">
-      <ItemPanel v-if="!isView" ref="addItemPanel" :height="height" />
-      <div ref="canvas" class="canvasPanel" :style="{'height':height+'px','width':isView?'100%':'70%','border-bottom':isView?0:null}" />
+      <ItemPanel v-if="!isView" ref="addItemPanel" :height="height"/>
+      <div ref="canvas" class="canvasPanel"
+           :style="{'height':height+'px','width':isView?'100%':'70%','border-bottom':isView?0:null}"/>
       <DetailPanel
         v-if="!isView"
         ref="detailPanel"
@@ -26,7 +27,7 @@
 </template>
 <script>
 import G6 from '@antv/g6/src'
-import { getShapeName } from '../util/clazz'
+import {getShapeName} from '../util/clazz'
 import Command from '../plugins/command'
 import Toolbar from '../plugins/toolbar'
 import AddItemPanel from '../plugins/addItemPanel'
@@ -35,9 +36,10 @@ import ToolbarPanel from '../components/ToolbarPanel'
 import ItemPanel from '../components/ItemPanel'
 import DetailPanel from '../components/DetailPanel'
 import i18n from '../locales'
-import { exportXML } from '../util/bpmn'
+import {exportXML} from '../util/bpmn'
 import registerShape from '../shape'
 import registerBehavior from '../behavior'
+
 registerShape(G6)
 registerBehavior(G6)
 export default {
@@ -71,7 +73,7 @@ export default {
     },
     data: {
       type: Object,
-      default: () => ({ nodes: [], edges: [] })
+      default: () => ({nodes: [], edges: []})
     },
     // 人员
     users: {
@@ -109,7 +111,8 @@ export default {
   },
   data() {
     return {
-      resizeFunc: () => {},
+      resizeFunc: () => {
+      },
       selectedModel: {},
       previous: '',
       processModel: {
@@ -151,9 +154,9 @@ export default {
     let plugins = []
     if (!this.isView) {
       this.cmdPlugin = new Command()
-      const toolbar = new Toolbar({ container: this.$refs['toolbar'].$el })
-      const addItemPanel = new AddItemPanel({ container: this.$refs['addItemPanel'].$el })
-      const canvasPanel = new CanvasPanel({ container: this.$refs['canvas'] })
+      const toolbar = new Toolbar({container: this.$refs['toolbar'].$el})
+      const addItemPanel = new AddItemPanel({container: this.$refs['addItemPanel'].$el})
+      const canvasPanel = new CanvasPanel({container: this.$refs['canvas']})
       plugins = [this.cmdPlugin, toolbar, addItemPanel, canvasPanel]
     }
     const width = this.$refs['canvas'].offsetWidth
@@ -173,7 +176,11 @@ export default {
       }
     })
     this.graph.saveXML = (createFile = true) => exportXML(this.graph.save(), this.processModel, createFile)
-    if (this.isView) { this.graph.setMode('view') } else { this.graph.setMode(this.mode) }
+    if (this.isView) {
+      this.graph.setMode('view')
+    } else {
+      this.graph.setMode(this.mode)
+    }
     this.graph.data(this.initShape(this.data))
     this.graph.render()
     if (this.isView && this.data && this.data.nodes) {
@@ -223,7 +230,7 @@ export default {
             var previousValue = ''
             const item = this.graph.findById(this.previous[0])
             if (item !== undefined) {
-              previousValue = { ...item.getModel() }
+              previousValue = {...item.getModel()}
               var err = this.verifyProcess(previousValue)
               if (err !== '') {
                 this.selectedModel = previousValue
@@ -233,7 +240,7 @@ export default {
             }
           }
           const item = this.graph.findById(items[0])
-          this.selectedModel = { ...item.getModel() }
+          this.selectedModel = {...item.getModel()}
           this.previous = items
         } else {
           if (this.previous !== '') {
@@ -261,14 +268,14 @@ export default {
         if (this.graph.executeCommand) {
           this.graph.executeCommand('update', {
             itemId: items[0],
-            updateModel: { [key]: value }
+            updateModel: {[key]: value}
           })
         } else {
-          this.graph.updateItem(item, { [key]: value })
+          this.graph.updateItem(item, {[key]: value})
         }
-        this.selectedModel = { ...item.getModel() }
+        this.selectedModel = {...item.getModel()}
       } else {
-        const canvasModel = { ...this.processModel, [key]: value }
+        const canvasModel = {...this.processModel, [key]: value}
         this.selectedModel = canvasModel
         this.processModel = canvasModel
       }
@@ -277,23 +284,24 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-    .root{
-        width: 100%;
-        height: 100%;
-        background-color: #fff;
-        display: block;
-    }
-    .canvasPanel {
-        flex: 0 0 auto;
-        float: left;
-        width:70%;
-        background-color: #fff;
-        border-bottom: 1px solid #E9E9E9;
-    }
+.root {
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  display: block;
+}
+
+.canvasPanel {
+  flex: 0 0 auto;
+  float: left;
+  width: 70%;
+  background-color: #fff;
+  border-bottom: 1px solid #E9E9E9;
+}
 </style>
 
 <style>
-  .panelRow > div:nth-child(1) {
-    line-height:18px
-  }
+.panelRow > div:nth-child(1) {
+  line-height: 18px
+}
 </style>

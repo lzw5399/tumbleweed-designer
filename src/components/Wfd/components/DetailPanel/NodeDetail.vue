@@ -12,7 +12,12 @@
         @change="(e) => onChange('writeTpls', e)"
       >
         <template v-for="(templateValue, templateIndex) in templatesBase">
-          <el-option v-if="templates.indexOf(templateValue.id) !== -1" :key="templateIndex" :label="templateValue.name" :value="templateValue.id" />
+          <el-option
+            v-if="templates.indexOf(templateValue.id) !== -1"
+            :key="templateIndex"
+            :label="templateValue.name"
+            :value="templateValue.id"
+          />
         </template>
       </el-select>
     </div>
@@ -28,7 +33,12 @@
         @change="(e) => onChange('readonlyTpls', e)"
       >
         <template v-for="(templateValue, templateIndex) in templatesBase">
-          <el-option v-if="templates.indexOf(templateValue.id) !== -1" :key="templateIndex" :label="templateValue.name" :value="templateValue.id" />
+          <el-option
+            v-if="templates.indexOf(templateValue.id) !== -1"
+            :key="templateIndex"
+            :label="templateValue.name"
+            :value="templateValue.id"
+          />
         </template>
       </el-select>
     </div>
@@ -44,7 +54,12 @@
         @change="(e) => onChange('hideTpls', e)"
       >
         <template v-for="(templateValue, templateIndex) in templatesBase">
-          <el-option v-if="templates.indexOf(templateValue.id) !== -1" :key="templateIndex" :label="templateValue.name" :value="templateValue.id" />
+          <el-option
+            v-if="templates.indexOf(templateValue.id) !== -1"
+            :key="templateIndex"
+            :label="templateValue.name"
+            :value="templateValue.id"
+          />
         </template>
       </el-select>
     </div>
@@ -60,7 +75,8 @@ export default {
     },
     onChange: {
       type: Function,
-      default: () => {}
+      default: () => {
+      }
     },
     readOnly: {
       type: Boolean,

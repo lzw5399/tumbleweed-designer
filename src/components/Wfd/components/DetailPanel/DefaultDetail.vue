@@ -12,6 +12,7 @@
     <div class="panelRow">
       <div><span style="color: red">*</span> 顺序：</div>
       <el-input
+        type="number"
         style="width:90%; font-size:12px"
         :disabled="readOnly"
         :value="model.sort"

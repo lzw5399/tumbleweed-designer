@@ -17,7 +17,7 @@
           <el-option label="其他" value="2" />
         </el-select>
       </div>
-      <div class="panelRow">
+      <div v-show="model.flowProperties === '2'" class="panelRow">
         <div>{{ i18n['sequenceFlow.expression'] }}：</div>
         <el-input
           style="width:90%; font-size:12px"

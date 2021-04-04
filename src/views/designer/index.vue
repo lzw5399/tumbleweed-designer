@@ -19,8 +19,7 @@
             size="small"
             @click="handleQuery"
           >搜索
-          </el-button
-          >
+          </el-button>
         </el-form-item>
       </el-form>
 
@@ -60,8 +59,8 @@
         :data="processValueList"
         @selection-change="handleSelectionChange"
       >
-        <el-table-column type="selection" width="55" align="center"/>
-        <el-table-column label="ID" prop="id" width="120"/>
+        <el-table-column type="selection" width="55" align="center" />
+        <el-table-column label="ID" prop="id" width="120" />
         <el-table-column
           label="名称"
           prop="name"
@@ -105,13 +104,13 @@
               @click="handleEdit(scope.row)"
             >编辑
             </el-button>
-<!--            <el-button-->
-<!--              size="mini"-->
-<!--              type="text"-->
-<!--              icon="el-icon-delete"-->
-<!--              @click="handleDelete(scope.row)"-->
-<!--            >删除-->
-<!--            </el-button>-->
+            <!--            <el-button-->
+            <!--              size="mini"-->
+            <!--              type="text"-->
+            <!--              icon="el-icon-delete"-->
+            <!--              @click="handleDelete(scope.row)"-->
+            <!--            >删除-->
+            <!--            </el-button>-->
           </template>
         </el-table-column>
       </el-table>
@@ -149,7 +148,7 @@
               </el-col>
               <el-col :span="12">
                 <el-form-item label="图标" prop="icon">
-                  <e-icon-picker v-model="ruleForm.icon" style="width: 100%"/>
+                  <e-icon-picker v-model="ruleForm.icon" style="width: 100%" />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -201,7 +200,7 @@
                     placeholder="请选择流程任务"
                     style="width: 100%"
                   >
-                    <el-option label="邮件" :value="1"/>
+                    <el-option label="邮件" :value="1" />
                   </el-select>
                 </el-form-item>
               </el-col>
@@ -405,6 +404,13 @@ export default {
       // })
     },
     getRoles() {
+      this.roles = [{
+        id: '1',
+        name: '这是干嘛啊111'
+      }, {
+        id: '2',
+        name: '这是干嘛啊'
+      }]
       // listRole({
       //   pageSize: 999999
       // }).then(response => {
@@ -535,6 +541,7 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
+          debugger
           const structureValue = this.$refs.wfd.graph.save()
           const r = this.verifyProcess(structureValue)
           if (r !== '') {

@@ -14,7 +14,12 @@
           :filterable="true"
           @change="(e) => onChange('task', e)"
         >
-          <el-option v-for="(taskValue, taskIndex) in tasks" :key="taskIndex" :label="taskValue.name" :value="taskValue.full_name" />
+          <el-option
+            v-for="(taskValue, taskIndex) in tasks"
+            :key="taskIndex"
+            :label="taskValue.name"
+            :value="taskValue.full_name"
+          />
         </el-select>
       </div>
       <div class="panelRow">
@@ -44,7 +49,12 @@
           :filterable="true"
           @change="(e) => { onChange('assignValue', e); getPersons(e) }"
         >
-          <el-option v-for="user in users" :key="user.userId" :label="user.nickName===''?user.username:user.nickName" :value="user.userId" />
+          <el-option
+            v-for="user in users"
+            :key="user.userId"
+            :label="user.nickName===''?user.username:user.nickName"
+            :value="user.userId"
+          />
         </el-select>
       </div>
       <div v-else-if="model.assignType === 'role'" class="panelRow">
@@ -57,7 +67,7 @@
           :multiple="true"
           @change="(e) => { onChange('assignValue', e); getPersons(e) }"
         >
-          <el-option v-for="(item, index) in roles" :key="index" :label="item.roleName" :value="item.roleId" />
+          <el-option v-for="(item, index) in roles" :key="index" :label="item.name" :value="item.id" />
         </el-select>
       </div>
       <!-- <div v-else-if="model.assignType === 'persongroup'" class="panelRow">
@@ -85,7 +95,12 @@
           :filterable="true"
           @change="(e) => { onChange('assignValue', e); getPersons(e) }"
         >
-          <el-option v-for="department in departments" :key="department.deptId" :label="department.deptName" :value="department.deptId" />
+          <el-option
+            v-for="department in departments"
+            :key="department.deptId"
+            :label="department.deptName"
+            :value="department.deptId"
+          />
         </el-select>
       </div>
       <div v-else-if="model.assignType === 'variable'" class="panelRow">
@@ -112,17 +127,18 @@
             readOnly)"
           :value="model.isCounterSign"
           @change="(e) => { onChange('isCounterSign', e); initCounterSign(e) }"
-        >{{ i18n['userTask.counterSign'] }}</el-checkbox>
-        <el-checkbox
-          :disabled="
-            model.assignValue===undefined||
-              model.assignValue===null||
-              model.assignValue.length <= 1||
-              model.isCounterSign||
-              readOnly"
-          :value="model.activeOrder"
-          @change="(value) => onChange('activeOrder', value)"
-        >{{ i18n['userTask.activeOrder'] }}</el-checkbox>
+        >{{ i18n['userTask.counterSign'] }}
+        </el-checkbox>
+        <!--        <el-checkbox-->
+        <!--          :disabled="-->
+        <!--            model.assignValue===undefined||-->
+        <!--              model.assignValue===null||-->
+        <!--              model.assignValue.length <= 1||-->
+        <!--              model.isCounterSign||-->
+        <!--              readOnly"-->
+        <!--          :value="model.activeOrder"-->
+        <!--          @change="(value) => onChange('activeOrder', value)"-->
+        <!--        >{{ i18n['userTask.activeOrder'] }}</el-checkbox>-->
         <el-checkbox
           v-if="(model.assignType === 'role' || model.assignType === 'department') &&
             model.assignValue!==undefined &&
@@ -131,7 +147,8 @@
             model.isCounterSign"
           :value="model.fullHandle"
           @change="(value) => onChange('fullHandle', value)"
-        >{{ i18n['userTask.fullHandle'] }}</el-checkbox>
+        >{{ i18n['userTask.fullHandle'] }}
+        </el-checkbox>
       </div>
       <NodeDetail
         :model="model"
@@ -147,6 +164,7 @@
 <script>
 import DefaultDetail from './DefaultDetail'
 import NodeDetail from './NodeDetail'
+
 export default {
   inject: ['i18n'],
   components: {
@@ -180,7 +198,8 @@ export default {
     },
     onChange: {
       type: Function,
-      default: () => {}
+      default: () => {
+      }
     },
     readOnly: {
       type: Boolean,
@@ -198,10 +217,10 @@ export default {
   data() {
     return {
       variableOptions: [{
-        value: 1,
+        value: '1',
         label: '创建者'
       }, {
-        value: 2,
+        value: '2',
         label: '创建者负责人'
       }],
       roleList: []
