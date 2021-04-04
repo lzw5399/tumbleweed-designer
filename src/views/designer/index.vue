@@ -397,6 +397,16 @@ export default {
     },
     // 获取用户
     getUsers() {
+      this.users = [{
+        id: 1,
+        name: '用户11_custom'
+      }, {
+        id: 2,
+        name: '用户22_custom'
+      }, {
+        id: '3',
+        name: '用户33_custom'
+      }]
       // listUser({
       //   pageSize: 999999
       // }).then(response => {
@@ -405,7 +415,7 @@ export default {
     },
     getRoles() {
       this.roles = [{
-        id: '1',
+        id: 1,
         name: '这是干嘛啊111'
       }, {
         id: '2',

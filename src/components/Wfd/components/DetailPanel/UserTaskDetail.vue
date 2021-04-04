@@ -22,6 +22,8 @@
           />
         </el-select>
       </div>
+
+      <!--审批者类型-->
       <div class="panelRow">
         <div><span style="color: red">*</span> {{ i18n['userTask.assignType'] }}：</div>
         <el-select
@@ -38,6 +40,8 @@
           <el-option key="variable" value="variable" :label="i18n['userTask.assignType.variable']" />
         </el-select>
       </div>
+
+      <!--用户审批-->
       <div v-if="model.assignType === 'person'" class="panelRow">
         <div><span style="color: red">*</span> {{ i18n['userTask.assignType.person.title'] }}：</div>
         <el-select
@@ -51,12 +55,14 @@
         >
           <el-option
             v-for="user in users"
-            :key="user.userId"
-            :label="user.nickName===''?user.username:user.nickName"
-            :value="user.userId"
+            :key="user.id"
+            :label="user.name"
+            :value="user.id"
           />
         </el-select>
       </div>
+
+      <!--角色审批-->
       <div v-else-if="model.assignType === 'role'" class="panelRow">
         <div><span style="color: red">*</span> {{ i18n['userTask.assignType.role.title'] }}：</div>
         <el-select
@@ -67,9 +73,11 @@
           :multiple="true"
           @change="(e) => { onChange('assignValue', e); getPersons(e) }"
         >
-          <el-option v-for="(item, index) in roles" :key="index" :label="item.name" :value="item.id" />
+          <el-option v-for="(item, index) in roleList" :key="index" :label="item.name" :value="item.id" />
         </el-select>
       </div>
+
+      <!--用户组审批-->
       <!-- <div v-else-if="model.assignType === 'persongroup'" class="panelRow">
         <div>{{ i18n['userTask.assignType.persongroup.title'] }}：</div>
         <el-select
@@ -84,6 +92,8 @@
           <el-option v-for="group in groups" :key="group.id" :label="group.nickname===''?group.name:group.nickname" :value="group.id" />
         </el-select>
       </div> -->
+
+      <!--部门审批-->
       <div v-else-if="model.assignType === 'department'" class="panelRow">
         <div><span style="color: red">*</span> {{ i18n['userTask.assignType.department.title'] }}：</div>
         <el-select
@@ -103,6 +113,8 @@
           />
         </el-select>
       </div>
+
+      <!--内置变量审批-->
       <div v-else-if="model.assignType === 'variable'" class="panelRow">
         <div><span style="color: red">*</span> {{ i18n['userTask.assignType.variable.title'] }}：</div>
         <el-select
@@ -117,6 +129,8 @@
           <el-option v-for="(item, index) in variableOptions" :key="index" :label="item.label" :value="item.value" />
         </el-select>
       </div>
+
+      <!--是否会签-->
       <div class="panelRow">
         <el-checkbox
           :disabled="model.assignType !== 'role' && model.assignType !== 'department' && (
@@ -150,26 +164,16 @@
         >{{ i18n['userTask.fullHandle'] }}
         </el-checkbox>
       </div>
-      <NodeDetail
-        :model="model"
-        :on-change="onChange"
-        :read-only="readOnly"
-        :templates="templates"
-        :templates-base="templatesBase"
-        :readonly-preview="false"
-      />
     </div>
   </div>
 </template>
 <script>
 import DefaultDetail from './DefaultDetail'
-import NodeDetail from './NodeDetail'
 
 export default {
   inject: ['i18n'],
   components: {
-    DefaultDetail,
-    NodeDetail
+    DefaultDetail
   },
   props: {
     model: {
@@ -223,8 +227,23 @@ export default {
         value: '2',
         label: '创建者负责人'
       }],
-      roleList: []
+
+      // 把int的id转成string
+      roleList: [],
+      userList: []
     }
+  },
+  watch: {
+    roles(val) {
+      this.initRoleList(val)
+    },
+    users(val) {
+      this.initUserList(val)
+    }
+  },
+  beforeMount() {
+    this.initRoleList(this.roles)
+    this.initUserList(this.users)
   },
   methods: {
     getPersons(e) {
@@ -240,6 +259,22 @@ export default {
     },
     assignmentType() {
       this.onChange('isCounterSign', false)
+    },
+    initRoleList(val) {
+      this.roleList = val.map(it => {
+        if (!isNaN(it.id)) {
+          it.id = it.id + ''
+        }
+        return it
+      })
+    },
+    initUserList(val) {
+      this.userList = val.map(it => {
+        if (!isNaN(it.id)) {
+          it.id = it.id + ''
+        }
+        return it
+      })
     }
   }
 }
