@@ -104,13 +104,13 @@
               @click="handleEdit(scope.row)"
             >编辑
             </el-button>
-            <!--            <el-button-->
-            <!--              size="mini"-->
-            <!--              type="text"-->
-            <!--              icon="el-icon-delete"-->
-            <!--              @click="handleDelete(scope.row)"-->
-            <!--            >删除-->
-            <!--            </el-button>-->
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-delete"
+              @click="handleDelete(scope.row)"
+            >删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -280,6 +280,8 @@ import {
   deleteProcessDefinition,
   updateProcessDefinition
 } from '@/api/process-definition'
+import { generateUUID } from '@/utils/uuid'
+import {mapGetters} from "vuex";
 
 export default {
   name: 'Process',
@@ -361,6 +363,11 @@ export default {
         ]
       }
     }
+  },
+  computed: {
+    ...mapGetters([
+      'currentUser'
+    ])
   },
   created() {
     this.queryParams.pageIndex = 1
@@ -551,22 +558,22 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          debugger
-          const structureValue = this.$refs.wfd.graph.save()
+          let structureValue = this.$refs.wfd.graph.save()
           const r = this.verifyProcess(structureValue)
           if (r !== '') {
             this.$message.error(r)
             return
           }
+
+          // 为edge添加id
+          structureValue = this.addIdForEdges(structureValue)
           if (
             structureValue.nodes.length > 0 &&
             structureValue.edges.length > 0
           ) {
             this.ruleForm.structure = structureValue
 
-            // TODO 修改为当前用户
-            const currentUser = 233
-            createProcessDefinition(this.ruleForm, currentUser).then(response => {
+            createProcessDefinition(this.ruleForm, this.currentUser.id).then(response => {
               this.getList()
               this.open = false
             })
@@ -576,21 +583,34 @@ export default {
         }
       })
     },
+    addIdForEdges(structureValue) {
+      if (!structureValue.nodes || structureValue.nodes.length === 0) return
+
+      for (const edge of structureValue.edges) {
+        if (!edge.id) {
+          edge.id = `flow_${generateUUID()}`
+        }
+      }
+
+      return structureValue
+    },
     editForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          const structureValue = this.$refs.wfd.graph.save()
+          let structureValue = this.$refs.wfd.graph.save()
           const r = this.verifyProcess(structureValue)
           if (r !== '') {
             this.$message.error(r)
             return
           }
+
+          // 为edge添加id
+          structureValue = this.addIdForEdges(structureValue)
+
           if (
             structureValue.nodes.length > 0 &&
             structureValue.edges.length > 0
           ) {
-            // TODO 修改currentUser
-            const currentUserId = 233
             updateProcessDefinition({
               id: this.ruleForm.id,
               name: this.ruleForm.name,
@@ -601,7 +621,7 @@ export default {
               notice: this.ruleForm.notice,
               icon: this.ruleForm.icon,
               remarks: this.ruleForm.remarks
-            }, currentUserId).then(response => {
+            }, this.currentUser.id).then(response => {
               this.getList()
               this.open = false
             })
@@ -627,9 +647,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          // TODO 待改动
-          const currentUserId = 233
-          deleteProcessDefinition(row.id, currentUserId).then(response => {
+          deleteProcessDefinition(row.id, this.currentUser.id).then(response => {
             if (response !== undefined) {
               this.getList()
               this.$message({

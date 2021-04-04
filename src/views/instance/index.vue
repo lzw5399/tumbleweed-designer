@@ -2,10 +2,10 @@
   <div class="app-container">
     <el-card class="box-card">
       <el-form ref="listQuery" :model="listQuery" :inline="true">
-        <el-form-item label="当前用户id">
+        <el-form-item label="流程实例名称">
           <el-input
-            v-model="currentUserId"
-            placeholder="请输入指定当前用户id, 为整形"
+            v-model="listQuery.keyword"
+            placeholder="请输入流程实例名称"
             clearable
             size="small"
             style="width: 240px"
@@ -19,8 +19,7 @@
             size="small"
             @click="handleQuery"
           >搜索
-          </el-button
-          >
+          </el-button>
         </el-form-item>
       </el-form>
 
@@ -43,8 +42,8 @@
         :data="processValueList"
         @selection-change="handleSelectionChange"
       >
-        <el-table-column type="selection" width="55" align="center"/>
-        <el-table-column label="ID" prop="id" width="120"/>
+        <el-table-column type="selection" width="55" align="center" />
+        <el-table-column label="ID" prop="id" width="120" />
         <el-table-column
           label="名称"
           prop="title"
@@ -162,17 +161,20 @@
             <el-form-item label="变量列表" prop="variables">
               <el-table
                 :data="variableList"
-                style="width: 100%;border-radius: 4px;">
+                style="width: 100%;border-radius: 4px;"
+              >
                 <el-table-column
                   label="变量名"
-                  width="180">
+                  width="180"
+                >
                   <template slot-scope="scope">
-                    <el-input v-model="scope.row.name" style="margin-left: 10px"></el-input>
+                    <el-input v-model="scope.row.name" style="margin-left: 10px" />
                   </template>
                 </el-table-column>
                 <el-table-column
                   label="变量值"
-                  width="180">
+                  width="180"
+                >
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.value" style="margin-left: 10px">{{ scope.row.value }}
                     </el-input>
@@ -183,14 +185,16 @@
                     <el-button
                       size="mini"
                       type="danger"
-                      @click="handleVariableDelete(scope.$index)">
+                      @click="handleVariableDelete(scope.$index)"
+                    >
                       {{ scope.$index === 0 && variableList.length === 1 ? '清空' : '删除' }}
                     </el-button>
                     <el-button
                       v-show="scope.$index === variableList.length - 1"
                       size="mini"
                       type="success "
-                      @click="handleVariableAdd">新增
+                      @click="handleVariableAdd"
+                    >新增
                     </el-button>
                   </template>
                 </el-table-column>
@@ -211,7 +215,7 @@
           </el-form>
 
           <div style="text-align: center; margin-top: 20px">
-            <el-button v-for="item in availableFlows" type="primary" @click="handleInstance(item.id)">
+            <el-button v-for="item in availableFlows" :key="item.id" type="primary" @click="handleInstance(item.id)">
               {{ item.label }}
             </el-button>
             <el-button
@@ -246,6 +250,7 @@ import {
 import {
   getProcessDefinitionList
 } from '@/api/process-definition'
+import {mapGetters} from "vuex";
 
 export default {
   name: 'Process',
@@ -254,8 +259,6 @@ export default {
     return {
       // 表明当前用户的头
       wfCurrentUserHeader: 'WF-CURRENT-USER',
-
-      currentUserId: 1,
 
       queryParams: {
         pageIndex: 1,
@@ -305,6 +308,11 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters([
+      'currentUser'
+    ])
+  },
   watch: {
     ruleForm() {
       console.log('值改变了', this.currentInstance)
@@ -331,7 +339,6 @@ export default {
         processInstanceId: this.currentInstance.id,
         remarks: this.handleRemarks,
         variables: this.variableList.filter(it => it.name !== '').map(it => {
-          debugger
           if (!isNaN(it.value)) {
             it.value = parseFloat(it.value)
           } else if (it.value.toLowerCase() === 'false' || it.value.toLowerCase() === 'true') {
@@ -346,7 +353,7 @@ export default {
           return
         }
 
-        handleProcessInstance(payload, this.currentUserId).then(response => {
+        handleProcessInstance(payload, this.currentUser.id).then(response => {
           this.getList()
           this.open = false
           this.$message({
@@ -369,7 +376,7 @@ export default {
           return
         }
 
-        denyProcessInstance(payload, this.currentUserId).then(response => {
+        denyProcessInstance(payload, this.currentUser.id).then(response => {
           this.getList()
           this.open = false
           this.$message({
@@ -423,15 +430,7 @@ export default {
       // 1=我的待办
       this.listQuery.type = 1
 
-      if (this.currentUserId === '' || this.currentUserId === undefined || isNaN(this.currentUserId)) {
-        this.currentUserId = 1
-        this.$message({
-          type: 'info',
-          message: '当前用户id为空或不合法, 已经重置为默认用户: 1'
-        })
-      }
-
-      getProcessInstanceList(this.listQuery, this.currentUserId).then(response => {
+      getProcessInstanceList(this.listQuery, this.currentUser.id).then(response => {
         this.processValueList = response.data.data
         this.total = response.data['totalCount']
         this.loading = false
@@ -460,14 +459,14 @@ export default {
       this.getProcessInitData()
       this.open = true
 
-      getProcessInstance(row.id, this.currentUserId).then(response => {
+      getProcessInstance(row.id, this.currentUser.id).then(response => {
         this.currentInstance = response.data
         this.variableList = response.data.variables
         if (!this.variableList || this.variableList.length === 0) {
           this.handleVariableAdd()
         }
         // 处理可操作的按钮
-        this.currentState = response.data.state.find(it => it.processor.includes(parseInt(this.currentUserId)))
+        this.currentState = response.data.state.find(it => it.processor.includes(this.currentUser.id + ''))
         this.availableFlows = this.currentState['availableEdges'] || []
         this.availableFlows.push({
           label: '否决',
@@ -492,7 +491,7 @@ export default {
           return it
         })
 
-        createProcessInstance(this.currentInstance, this.currentUserId).then(response => {
+        createProcessInstance(this.currentInstance, this.currentUser.id).then(response => {
           this.getList()
           this.open = false
         })
@@ -504,7 +503,7 @@ export default {
           updateProcessInstance({
             id: this.currentInstance.id,
             name: this.currentInstance.name
-          }, this.currentUserId).then(response => {
+          }, this.currentUser.id).then(response => {
             this.getList()
             this.open = false
           })

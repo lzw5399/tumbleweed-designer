@@ -1,15 +1,15 @@
 <template>
   <div class="navbar">
-    <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar"/>
+    <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
 
-    <breadcrumb class="breadcrumb-container"/>
+    <breadcrumb class="breadcrumb-container" />
 
     <!--    右上角的用户图标  -->
     <!--    <div class="right-menu">-->
     <!--      <el-dropdown class="avatar-container" trigger="click">-->
     <!--        <div class="avatar-wrapper">-->
     <!--          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">-->
-    <!--          <i class="el-icon-caret-bottom" />-->
+    <!--          <i class="el-icon-caret-bottom"/>-->
     <!--        </div>-->
     <!--        <el-dropdown-menu slot="dropdown" class="user-dropdown">-->
     <!--          <router-link to="/">-->
@@ -29,6 +29,20 @@
     <!--        </el-dropdown-menu>-->
     <!--      </el-dropdown>-->
     <!--    </div>-->
+
+    <div class="right-menu">
+      <el-dropdown class="avatar-container" trigger="click">
+        <div class="avatar-wrapper">
+          <span>当前用户: {{ currentUser.name }}(id:{{ currentUser.id }}) | 点击切换用户</span>
+          <i class="el-icon-caret-bottom" />
+        </div>
+        <el-dropdown-menu slot="dropdown" class="user-dropdown">
+          <el-dropdown-item v-for="user in initialDatas.users" :key="user.id" @click.native="changeUser(user)">
+            <span v-if="user.id !== currentUser.id" style="display:block;">{{ `${user.name}(id:${user.id})` }}</span>
+          </el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
+    </div>
   </div>
 </template>
 
@@ -42,19 +56,27 @@ export default {
     Breadcrumb,
     Hamburger
   },
+  data() {
+    return {
+    }
+  },
   computed: {
     ...mapGetters([
       'sidebar',
-      'avatar'
+      'avatar',
+      'initialDatas',
+      'currentUser'
     ])
+  },
+  beforeMount() {
   },
   methods: {
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },
-    async logout() {
-      await this.$store.dispatch('user/logout')
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+    changeUser(user) {
+      this.$store.dispatch('initialDatas/changeUser', user)
+      location.reload()
     }
   }
 }
